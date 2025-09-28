@@ -122,7 +122,6 @@ app.listen(PORT, () => {
   console.log(`📊 Database: ${process.env.DB_NAME || 'postman_clone_db'}`);
   console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-  console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
 });
 
 module.exports = app;
