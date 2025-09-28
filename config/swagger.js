@@ -1,5 +1,6 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const { updateCollection } = require('../controllers/collectionController');
 
 const options = {
   definition: {
@@ -38,7 +39,8 @@ const options = {
             id: { type: 'integer', example: 1 },
             email: { type: 'string', example: 'user@example.com' },
             name: { type: 'string', example: 'John Doe' },
-            created_at: { type: 'string', format: 'date-time' }
+              created_at: { type: 'string', format: 'date-time' },
+              //updated_at: { type: 'string', format: 'date-time' }
           }
         },
         Workspace: {
@@ -47,7 +49,8 @@ const options = {
             id: { type: 'integer', example: 1 },
             name: { type: 'string', example: 'My Workspace' },
             creator_id: { type: 'integer', example: 1 },
-            created_at: { type: 'string', format: 'date-time' }
+              created_at: { type: 'string', format: 'date-time' },
+            updated_at: { type: 'string', format: 'date-time' }
           }
         },
         Collection: {
@@ -56,7 +59,8 @@ const options = {
             id: { type: 'integer', example: 1 },
             workspace_id: { type: 'integer', example: 1 },
             name: { type: 'string', example: 'API Collection' },
-            created_at: { type: 'string', format: 'date-time' }
+              created_at: { type: 'string', format: 'date-time' },
+            updated_at: { type: 'string', format: 'date-time' }
           }
         },
         Request: {

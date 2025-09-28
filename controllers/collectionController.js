@@ -113,6 +113,7 @@ const collectionController = {
 
   async updateCollection(req, res) {
     try {
+      console.log('Request body:', req.body);
       const { name } = req.body;
       
       if (!name || name.trim().length === 0) {
