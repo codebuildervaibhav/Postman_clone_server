@@ -1,12 +1,13 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+
 const { updateCollection } = require('../controllers/collectionController');
 
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Postman Clone API',
+      title: 'Postman Swagger API',
       version: '1.0.0',
       description: 'A complete Postman clone API with workspace, collection, and request management',
       contact: {

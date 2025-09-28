@@ -36,14 +36,18 @@ const variableController = {
   },
 
   async deleteVariable(req, res) {
-    try {
-      await db('Variables').where('id', req.params.id).delete();
-      res.json({ success: true, message: 'Variable deleted' });
-    } catch (error) {
-      console.error('Delete variable error:', error);
-      res.status(500).json({ error: 'Variable deletion failed', message: 'Could not delete variable' });
+  try {
+    const deleted = await db('Variables').where('id', req.params.id).delete();
+    if (deleted === 0) {
+      return res.status(404).json({ error: 'Variable not found', message: 'No variable found with this id' });
     }
-  },
+    res.json({ success: true, message: 'Variable deleted' });
+  } catch (error) {
+    console.error('Delete variable error:', error);
+    res.status(500).json({ error: 'Variable deletion failed', message: 'Could not delete variable' });
+  }
+},
+  
 
   async getOwnerVariables(req, res) {
     try {

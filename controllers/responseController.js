@@ -15,15 +15,18 @@ const responseController = {
     }
   },
 
-  async deleteResponse(req, res) {
+  async deleteResponse(req, res) { 
     try {
-      await db('Responses').where('id', req.params.id).delete();
+      const deleted = await db('Responses').where('id', req.params.id).delete();
+      if (deleted === 0) {
+        return res.status(404).json({ error: 'Response not found', message: 'No response found with this id' });
+      }
       res.json({ success: true, message: 'Response deleted' });
     } catch (error) {
       console.error('Delete response error:', error);
       res.status(500).json({ error: 'Response deletion failed', message: 'Could not delete response' });
     }
-  }
+  },
 };
 
 module.exports = responseController;
