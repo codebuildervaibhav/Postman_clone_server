@@ -65,39 +65,39 @@ const authenticateToken = async (req, res, next) => {
 };
 
 // Optional authentication (doesn't fail if no token)
-const optionalAuth = async (req, res, next) => {
-  try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+// const optionalAuth = async (req, res, next) => {
+//   try {
+//     const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
 
-    if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const session = await db('UserSessions')
-        .where('token', token)
-        .where('expires_at', '>', new Date())
-        .first();
+//     if (token) {
+//       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//       const session = await db('UserSessions')
+//         .where('token', token)
+//         .where('expires_at', '>', new Date())
+//         .first();
 
-      if (session) {
-        const user = await db('Users')
-          .where('id', session.user_id)
-          .select('id', 'email', 'name', 'created_at')
-          .first();
+//       if (session) {
+//         const user = await db('Users')
+//           .where('id', session.user_id)
+//           .select('id', 'email', 'name', 'created_at')
+//           .first();
 
-        if (user) {
-          req.user = user;
-          req.session = session;
-        }
-      }
-    }
+//         if (user) {
+//           req.user = user;
+//           req.session = session;
+//         }
+//       }
+//     }
     
-    next();
-  } catch (error) {
-    // Continue without authentication
-    next();
-  }
-};
+//     next();
+//   } catch (error) {
+//     // Continue without authentication
+//     next();
+//   }
+// };
 
 module.exports = { 
   authenticateToken, 
-  optionalAuth 
+  //optionalAuth 
 };
