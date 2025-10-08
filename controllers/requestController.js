@@ -1,4 +1,5 @@
 const db = require('../db');
+const axios = require('axios');
 
 const requestController = {
   async getRequestById(req, res) {
@@ -302,28 +303,61 @@ const requestController = {
         });
       }
 
-      // TODO: Implement actual API call execution
-      // For now, we'll create a mock response
-      const mockResponse = {
-        status_code: 200,
-        headers: { 
-          'Content-Type': 'application/json',
-          'X-Powered-By': 'Postman-Clone'
-        },
-        body: JSON.stringify({
-          message: 'Mock execution - Real API execution to be implemented',
-          request: {
-            id: request.id,
-            name: request.name,
-            method: request.method,
-            url: request.url
+      const startTime = Date.now();
+      let apiResponse;
+      
+      try {
+        const headers = typeof request.headers === 'string' ? JSON.parse(request.headers) : request.headers || {};
+        const body = typeof request.body === 'string' ? JSON.parse(request.body) : request.body || null;
+
+        apiResponse = await axios({
+          method: request.method,
+          url: request.url,
+          data: body,
+          headers: headers,
+          validateStatus: () => true, // Allow all status codes to be handled
+        });
+
+      } catch (error) {
+        // Network or other unexpected errors
+        const endTime = Date.now();
+        const dbResponse = {
+          status_code: 500,
+          headers: JSON.stringify(error.response?.headers || {}),
+          body: JSON.stringify({
+            error: 'Execution failed',
+            message: error.message
+          }),
+          response_time_ms: endTime - startTime
+        };
+        
+        const [responseId] = await db('Responses').insert(dbResponse);
+        await db('RequestExecutions').insert({
+          user_id: req.user.id,
+          request_id: req.params.id,
+          response_id: responseId
+        });
+
+        return res.status(500).json({
+          success: false,
+          message: 'Request execution failed with a network error',
+          error: {
+            message: error.message,
+            ...dbResponse
           }
-        }),
-        response_time_ms: Math.floor(Math.random() * 200) + 50 // 50-250ms
+        });
+      }
+
+      const endTime = Date.now();
+      const responseToSave = {
+        status_code: apiResponse.status,
+        headers: JSON.stringify(apiResponse.headers),
+        body: JSON.stringify(apiResponse.data),
+        response_time_ms: endTime - startTime
       };
 
       // Save response
-      const [responseId] = await db('Responses').insert(mockResponse);
+      const [responseId] = await db('Responses').insert(responseToSave);
 
       // Save execution history
       const [executionId] = await db('RequestExecutions').insert({
@@ -341,7 +375,7 @@ const requestController = {
         message: 'Request executed successfully',
         execution: {
           ...execution,
-          response: mockResponse
+          response: responseToSave
         }
       });
     } catch (error) {
